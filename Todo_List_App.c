@@ -55,9 +55,24 @@ void add_task() {
 }
 
 bool validate_date(int day, int month, int year) {
-    printf("Function to validate deadline\n");
-}
+    if(year < 1900 || year > 2100) return false;
+    if (month < 1 || month > 12) return false;
 
+    int days_in_month;
+    if(month ==2){
+        if((year % 400 == 0) || (year % 100 != 0 && year % 4 ==0))
+            days_in_month = 29;
+        else
+            days_int_months = 28;
+}
+else if (month == 4 || month == 6 || month == 9 || month == 11){
+days_in_month = 30;
+}
+else {
+days_in_month = 31;
+}
+return day >= 1 && day <= days_in_month;
+} 
 int main() {
     char choice[10];
     printf("\nWelcome to the To-Do List Application!\n");
