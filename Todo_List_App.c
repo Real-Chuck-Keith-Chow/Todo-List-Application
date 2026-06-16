@@ -6,8 +6,14 @@
 #define MAX_TASKS 100
 #define MAX_TASK_LENGTH 100
 
-char tasks[MAX_TASKS][MAX_TASK_LENGTH];
-int days[MAX_TASKS], months[MAX_TASKS], years[MAX_TASKS];
+typedef struct {
+    char name[MAX_TASK_LENGTH];
+    int day;
+    int month;
+    int year;
+} Task;
+
+Task tasks[MAX_TASKS];
 int task_count = 0;
 
 void add_task();
@@ -15,13 +21,12 @@ void display_tasks();
 bool validate_date(int day, int month, int year);
 void delete_task(int task_number);
 
-// -----------------------------------------------------
 void userChoice(char *choice) {
     if (strcmp(choice, "1") == 0) {
         add_task();
     } 
     else if (strcmp(choice, "2") == 0) {
-        //Check if there are any tasks before proceeding
+        // Check if there are any tasks before proceeding
         if (task_count == 0) {
             printf("No tasks available to delete.\n\n");
             return;
@@ -50,21 +55,17 @@ void userChoice(char *choice) {
 void delete_task(int task_number) {
     int index = task_number - 1;
     if (index >= 0 && index < task_count) {
-        printf("Task '%s' deleted successfully!\n\n", tasks[index]);
+        printf("Task '%s' deleted successfully!\n\n", tasks[index].name);
          
         // After deletion, shift all subsequent elements one position to the left
         for (int i = index; i < task_count - 1; i++) {
-            strcpy(tasks[i], tasks[i + 1]);
-            days[i] = days[i + 1];
-            months[i] = months[i + 1];
-            years[i] = years[i + 1];
+            tasks[i] = tasks[i + 1];
         }
         task_count--;
     } else {
         printf("Invalid task number!\n\n");
     }
 }
-// -----------------------------------------------------
 
 void display_tasks() {
     if (task_count == 0) {
@@ -73,7 +74,12 @@ void display_tasks() {
     }
     printf("\nYour Tasks:\n");
     for (int i = 0; i < task_count; ++i) {
-        printf("%d. %s - Deadline: %02d-%02d-%d\n", i + 1, tasks[i], days[i], months[i], years[i]);
+        printf("%d. %s - Deadline: %02d-%02d-%d\n", 
+               i + 1, 
+               tasks[i].name, 
+               tasks[i].day, 
+               tasks[i].month, 
+               tasks[i].year);
     }
     printf("\n");
 }
@@ -104,37 +110,33 @@ void add_task() {
         return;
     }
 
-    char task_name[MAX_TASK_LENGTH];
-    int day, month, year;
+    Task new_task;
     
     printf("Enter task name: ");
     
-    // Now read the task name
-    fgets(task_name, MAX_TASK_LENGTH, stdin);
+    // Read the task name
+    fgets(new_task.name, MAX_TASK_LENGTH, stdin);
 
     // Remove trailing newline if present
-    task_name[strcspn(task_name, "\n")] = '\0';
+    new_task.name[strcspn(new_task.name, "\n")] = '\0';
     
     printf("Enter deadline (DD MM YYYY): \n");
     printf("Day: ");
-    scanf("%d", &day);
+    scanf("%d", &new_task.day);
     printf("Month: ");
-    scanf("%d", &month);
+    scanf("%d", &new_task.month);
     printf("Year: ");
-    scanf("%d", &year);
+    scanf("%d", &new_task.year);
 
     // Clear the newline from previous input
     getchar();
 
-    if (!validate_date(day, month, year)) {
+    if (!validate_date(new_task.day, new_task.month, new_task.year)) {
         printf("Invalid date! Task not added.\n\n");
         return;
     }
 
-    strcpy(tasks[task_count], task_name);
-    days[task_count] = day;
-    months[task_count] = month;
-    years[task_count] = year;
+    tasks[task_count] = new_task;
     task_count++;
     printf("Task added successfully!\n\n");
 }
